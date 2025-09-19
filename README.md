@@ -36,8 +36,8 @@ A full-stack web application that transforms long-form blog content into social 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd ai-content-repurposing-tool
+   git clone https://github.com/zafor158/AI-Powered-Content-Repurposing-Tool.git
+   cd AI-Powered-Content-Repurposing-Tool
    ```
 
 2. **Install frontend dependencies**
@@ -139,7 +139,7 @@ Health check endpoint.
 ## Project Structure
 
 ```
-ai-content-repurposing-tool/
+AI-Powered-Content-Repurposing-Tool/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── App.jsx        # Main React component
