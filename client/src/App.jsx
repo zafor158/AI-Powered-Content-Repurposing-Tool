@@ -17,7 +17,11 @@ function App() {
     setResult(null)
 
     try {
-      const response = await fetch('http://localhost:3001/api/repurpose', {
+      const apiUrl = import.meta.env.DEV 
+        ? 'http://localhost:3001/api/repurpose'
+        : '/api/repurpose';
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
