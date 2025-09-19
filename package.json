@@ -1,5 +1,38 @@
 {
+  "name": "ai-content-repurposing-tool",
+  "version": "1.0.0",
+  "description": "AI-Powered Content Repurposing Tool - Transform blog posts into social media content",
+  "main": "api/repurpose.js",
+  "scripts": {
+    "build": "cd client && npm run build",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "start": "cd server && npm start"
+  },
   "dependencies": {
-    "groq-sdk": "^0.32.0"
-  }
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "axios": "^1.12.2",
+    "cheerio": "^1.1.2",
+    "groq-sdk": "^0.32.0",
+    "dotenv": "^17.2.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "content",
+    "repurposing",
+    "social-media",
+    "blog",
+    "twitter",
+    "linkedin"
+  ],
+  "author": "zafor158",
+  "license": "MIT"
 }
