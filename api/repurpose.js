@@ -2,10 +2,15 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const Groq = require('groq-sdk');
 
-// Initialize Groq
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+// Initialize Groq with error handling
+let groq;
+try {
+  groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
+} catch (error) {
+  console.error('Failed to initialize Groq:', error);
+}
 
 // Function to extract article content from HTML
 async function extractArticleContent(url) {
@@ -76,6 +81,10 @@ async function extractArticleContent(url) {
 // Function to generate content using Groq
 async function generateContent(articleContent) {
   try {
+    // Check if Groq is properly initialized
+    if (!groq) {
+      throw new Error('Groq API not properly initialized');
+    }
     // Truncate content to avoid token limit (approximately 3000 characters to stay under 8000 token limit)
     const maxContentLength = 3000;
     const truncatedContent = articleContent.length > maxContentLength 
@@ -226,7 +235,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { url } = req.body;
+    // For Vercel, req.body should be automatically parsed
+    const { url } = req.body || {};
     
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
@@ -234,8 +244,13 @@ module.exports = async (req, res) => {
 
     console.log(`Processing URL: ${url}`);
     
-    // Extract article content
-    const articleContent = await extractArticleContent(url);
+    // Extract article content with timeout
+    const articleContent = await Promise.race([
+      extractArticleContent(url),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Content extraction timeout')), 30000)
+      )
+    ]);
     
     if (!articleContent || articleContent.length < 100) {
       return res.status(400).json({ error: 'Could not extract sufficient content from the URL' });
@@ -243,8 +258,13 @@ module.exports = async (req, res) => {
 
     console.log(`Extracted content length: ${articleContent.length} characters`);
     
-    // Generate repurposed content
-    const repurposedContent = await generateContent(articleContent);
+    // Generate repurposed content with timeout
+    const repurposedContent = await Promise.race([
+      generateContent(articleContent),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Content generation timeout')), 60000)
+      )
+    ]);
     
     console.log('Content generation completed successfully');
     
