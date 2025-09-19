@@ -9,7 +9,7 @@
       }
     },
     {
-      "src": "api/repurpose-simple.js",
+      "src": "api/repurpose.js",
       "use": "@vercel/node",
       "config": {
         "includeFiles": "api/package.json"
@@ -19,7 +19,7 @@
   "routes": [
     {
       "src": "/api/repurpose",
-      "dest": "/api/repurpose-simple.js"
+      "dest": "/api/repurpose.js"
     },
     {
       "src": "/(.*)",

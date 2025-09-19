@@ -1,19 +1,11 @@
-const express = require('express');
-const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const Groq = require('groq-sdk');
-
-const app = express();
 
 // Initialize Groq
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
-
-// Middleware
-app.use(cors());
-app.use(express.json());
 
 // Function to extract article content from HTML
 async function extractArticleContent(url) {
@@ -203,8 +195,24 @@ RESPONSE FORMAT (JSON only):
   }
 }
 
-// API endpoint
-app.post('/api/repurpose', async (req, res) => {
+// Vercel serverless function handler
+module.exports = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const { url } = req.body;
     
@@ -233,11 +241,4 @@ app.post('/api/repurpose', async (req, res) => {
     console.error('Error processing request:', error);
     res.status(500).json({ error: error.message });
   }
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
-});
-
-module.exports = app;
+};
